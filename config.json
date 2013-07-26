@@ -1,11 +1,11 @@
 {
 	"server" :  {
 		"host": "localhost",
-		"port": 8080,
+		"port": 8080
 	},
 	
 	"reader": {
     	"host": "inventory.tools.lhotse.ov.otto.de",
-    	"port": 80,
+    	"port": 80
 	}
 }

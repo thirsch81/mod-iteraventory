@@ -1,14 +1,11 @@
 {
 	"main":"groovy:thhi.vertx.mod.StarterVerticle",
 	"auto-redeploy": true,
-	
-	// Mandatory fields
-	"description":"Basic inventory search",
+	"description": "Basic inventory search",
 	"licenses": ["Creative Commons Attribution 3.0 Unported License"],
 	"author": "Thomas Hirsch",
 	
-	// Optional fields
-	"developers": [thokari],
+	"developers": ["thokari"],
 	"keywords": [],
 	"homepage": "https://github.com/thirsch81/mod-iteraventory"
 }
