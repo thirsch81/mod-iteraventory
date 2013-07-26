@@ -9,15 +9,11 @@ public class StarterVerticle extends Verticle {
 
 		container.with {
 
-			def readerConfig = config.reader
-
-			deployWorkerVerticle("groovy:" + InventoryReaderVerticle.class.name, readerConfig) { result ->
+			deployWorkerVerticle("groovy:" + InventoryReaderVerticle.class.name, config.reader) { result ->
 				logger.info("Deployed InventoryReader ${result.result()}")
 			}
 
-			def serverconfig = config.server
-
-			deployWorkerVerticle("groovy:" + InventoryServerVerticle.class.name) { result ->
+			deployWorkerVerticle("groovy:" + InventoryServerVerticle.class.name, config.server) { result ->
 				logger.info("Deployed InventoryServer ${result.result()}")
 			}
 		}
