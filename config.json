@@ -1,0 +1,11 @@
+{
+	"server" :  {
+		"host": "localhost",
+		"port": 8080,
+	},
+	
+	"reader": {
+    	"host": "inventory.tools.lhotse.ov.otto.de",
+    	"port": 80,
+	}
+}
