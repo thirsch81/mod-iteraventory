@@ -45,8 +45,8 @@ class InventoryServerVerticle extends Verticle {
 		server.listen(port, hostname)
 	}
 
-	def genericSearch(inventory, List searchTerms) {
-		def nodes = []
+	Set genericSearch(inventory, List searchTerms) {
+		def nodes = [] as Set
 		for(machine in inventory) {
 			for(property in machine) {
 				searchTerms.each {
@@ -59,8 +59,8 @@ class InventoryServerVerticle extends Verticle {
 		return nodes
 	}
 
-	def specialSearch(inventory, Map searchParams) {
-		def nodes = []
+	Set specialSearch(inventory, Map searchParams) {
+		def nodes = [] as Set
 		for(machine in inventory) {
 			for(property in machine) {
 				searchParams.each {
