@@ -1,7 +1,18 @@
 {
 	"server" :  {
 		"host": "localhost",
-		"port": 8080
+		"port": 8080,
+		
+		"columns": [
+			{"label": "Hostname", "map": "fqdn"},
+			{"label": "IP", "map": "ipaddress" },
+			{"label": "Vertical", "map": "lhotse_vertical" },
+			{"label": "Group", "map": "lhotse_group" },
+			{"label": "CPU", "map": "processorcount" },
+			{"label": "RAM in MB", "map": "memorysize" },
+			{"label": "Disk in MB", "map": "lhotse_diskspace" },
+			{"label": "Used in MB", "map": "lhotse_diskspace_used" }
+		]
 	},
 	
 	"reader": {

@@ -18,6 +18,8 @@ class InventoryServerVerticle extends Verticle {
 		createWebServer(hostname, port)
 	}
 
+	def columnConfig = { container.config.columns }
+
 	def createWebServer(hostname, port) {
 
 		RouteMatcher rm = new RouteMatcher()
@@ -26,18 +28,36 @@ class InventoryServerVerticle extends Verticle {
 
 			def inventory = parseInventory()
 			def params = collectParams(request)
-			def nodes = inventory.collect { it.fqdn }
 			// generic search
 			if("search" in params) {
-				nodes = genericSearch(inventory, params.search as List)
+				inventory.retainAll(genericSearch(inventory, params.search as List))
 				// if there are more parameters..
 				params.remove("search")
 			}
 			// special search
 			if(params) {
-				nodes.retainAll(specialSearch(inventory, params))
+				params.each {
+					inventory.retainAll(specialSearch(inventory, it))
+				}
 			}
+			def nodes = inventory.collect { it.fqdn }
 			request.response.end(nodes.join("\n"))
+		}
+
+		rm.get("/inventory"){ request ->
+			request.response.end(getInventory())
+		}
+
+		rm.get("/inventory/columns"){ request ->
+			request.response.end(new JsonArray(columnConfig()).encode())
+		}
+
+		rm.get("/") { request ->
+			request.response.sendFile("web/index.html")
+		}
+
+		rm.getWithRegEx(".*") { request ->
+			request.response.sendFile("web${request.uri}")
 		}
 
 		HttpServer server = vertx.createHttpServer()
@@ -47,11 +67,11 @@ class InventoryServerVerticle extends Verticle {
 
 	Set genericSearch(inventory, List searchTerms) {
 		def nodes = [] as Set
-		for(machine in inventory) {
-			for(property in machine) {
+		inventory.each { machine ->
+			machine.each { property ->
 				searchTerms.each {
 					if(property.value && property.value.contains(it)) {
-						nodes.add(machine.fqdn)
+						nodes.add(machine)
 					}
 				}
 			}
@@ -59,14 +79,12 @@ class InventoryServerVerticle extends Verticle {
 		return nodes
 	}
 
-	Set specialSearch(inventory, Map searchParams) {
+	Set specialSearch(inventory, param) {
 		def nodes = [] as Set
-		for(machine in inventory) {
+		inventory.each { machine ->
 			for(property in machine) {
-				searchParams.each {
-					if(property.key.equals(it.key) && property.value && property.value.contains(it.value)) {
-						nodes.add(machine.fqdn)
-					}
+				if(property.key.equals(param.key) && property.value && property.value.contains(param.value)) {
+					nodes.add(machine)
 				}
 			}
 		}
@@ -86,7 +104,11 @@ class InventoryServerVerticle extends Verticle {
 		return params
 	}
 
+	String getInventory() {
+		vertx.sharedData.getMap("inventory")["inventory"].toString()
+	}
+
 	def parseInventory() {
-		new JsonSlurper().parseText(vertx.sharedData.getMap("inventory")["inventory"].toString())
+		new JsonSlurper().parseText(getInventory())
 	}
 }
